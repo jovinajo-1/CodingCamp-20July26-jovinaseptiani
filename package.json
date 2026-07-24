@@ -1,0 +1,25 @@
+{
+  "name": "codingcamp-20july26-jovinaseptiani-1",
+  "version": "1.0.0",
+  "description": "Repository mini project coding camp software engineer revou",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jovinajo/CodingCamp-20July26-jovinaseptiani.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/jovinajo/CodingCamp-20July26-jovinaseptiani/issues"
+  },
+  "homepage": "https://github.com/jovinajo/CodingCamp-20July26-jovinaseptiani#readme",
+  "devDependencies": {
+    "fast-check": "^4.9.0",
+    "jest": "^30.4.2"
+  }
+}

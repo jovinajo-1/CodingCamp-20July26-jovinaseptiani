@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Track personal expenses, view a running balance, and visualize spending by category." />
+    <title>Expense &amp; Budget Visualizer</title>
+
+    <!-- Chart.js CDN -->
+    <script
+      src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"
+      defer
+    ></script>
+
+    <!-- Application stylesheet -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <!-- Browser-compatibility overlay (shown via JS when browser is unsupported) -->
+    <div id="browser-warning" class="browser-warning" role="alert" aria-live="assertive" hidden>
+      <p>
+        This app requires a modern browser. Please use
+        <a href="https://www.google.com/chrome/" target="_blank" rel="noopener">Chrome</a>,
+        <a href="https://www.mozilla.org/firefox/" target="_blank" rel="noopener">Firefox</a>,
+        <a href="https://www.microsoft.com/edge" target="_blank" rel="noopener">Edge</a>, or
+        <a href="https://www.apple.com/safari/" target="_blank" rel="noopener">Safari</a>.
+      </p>
+    </div>
+
+    <!-- Global notification banner (errors / warnings shown via JS) -->
+    <div id="notification-banner" class="notification-banner" role="alert" aria-live="polite" hidden></div>
+
+    <!-- Loading indicator (shown via JS when load time exceeds 500 ms) -->
+    <div id="loading-indicator" class="loading-indicator" role="status" aria-live="polite" hidden>
+      <span class="loading-spinner" aria-hidden="true"></span>
+      <span>Loading&#8230;</span>
+    </div>
+
+    <main id="app" class="app-container">
+
+      <!-- 1. BALANCE DISPLAY -->
+      <section
+        id="balance-section"
+        class="balance-section"
+        aria-labelledby="balance-heading"
+      >
+        <h1 id="balance-heading" class="balance-heading">Total Expenses</h1>
+        <p id="balance-display" class="balance-amount" aria-live="polite" aria-atomic="true">
+          $0.00
+        </p>
+      </section>
+
+      <!-- 2. INPUT FORM -->
+      <section
+        id="form-section"
+        class="form-section"
+        aria-labelledby="form-heading"
+      >
+        <h2 id="form-heading" class="form-heading">Add Expense</h2>
+
+        <form id="transaction-form" class="transaction-form" novalidate>
+
+          <!-- Item Name field -->
+          <div class="form-group">
+            <label for="item-name" class="form-label">Item Name</label>
+            <input
+              type="text"
+              id="item-name"
+              name="itemName"
+              class="form-input"
+              placeholder="e.g. Groceries at Whole Foods"
+              maxlength="100"
+              required
+              aria-required="true"
+              aria-describedby="item-name-error"
+            />
+            <span
+              id="item-name-error"
+              class="field-error"
+              role="alert"
+              aria-live="polite"
+              hidden
+            ></span>
+          </div>
+
+          <!-- Amount field -->
+          <div class="form-group">
+            <label for="amount" class="form-label">Amount ($)</label>
+            <input
+              type="number"
+              id="amount"
+              name="amount"
+              class="form-input"
+              placeholder="0.01"
+              min="0.01"
+              max="999999999.99"
+              step="0.01"
+              required
+              aria-required="true"
+              aria-describedby="amount-error"
+            />
+            <span
+              id="amount-error"
+              class="field-error"
+              role="alert"
+              aria-live="polite"
+              hidden
+            ></span>
+          </div>
+
+          <!-- Category dropdown -->
+          <div class="form-group">
+            <label for="category" class="form-label">Category</label>
+            <select
+              id="category"
+              name="category"
+              class="form-select"
+              required
+              aria-required="true"
+              aria-describedby="category-error"
+            >
+              <option value="" disabled selected>Select a category</option>
+              <option value="Food">Food</option>
+              <option value="Transport">Transport</option>
+              <option value="Fun">Fun</option>
+            </select>
+            <span
+              id="category-error"
+              class="field-error"
+              role="alert"
+              aria-live="polite"
+              hidden
+            ></span>
+          </div>
+
+          <!-- Submit button -->
+          <button
+            type="submit"
+            id="submit-btn"
+            class="btn btn-primary"
+            aria-label="Add expense to list"
+          >
+            Add Expense
+          </button>
+
+        </form>
+      </section>
+
+      <!-- 3. TRANSACTION LIST -->
+      <section
+        id="transaction-section"
+        class="transaction-section"
+        aria-labelledby="transaction-heading"
+      >
+        <h2 id="transaction-heading" class="transaction-heading">Transaction History</h2>
+
+        <ul
+          id="transaction-list"
+          class="transaction-list"
+          aria-label="List of recorded transactions"
+          aria-live="polite"
+          aria-relevant="additions removals"
+        >
+          <!-- Empty-state placeholder (visible when list is empty) -->
+          <li id="empty-state" class="empty-state" aria-label="No transactions recorded">
+            No transactions yet. Add an expense above to get started.
+          </li>
+        </ul>
+
+        <p id="truncation-indicator" class="truncation-indicator" role="status" hidden>
+          Maximum of 500 transactions reached. Delete existing entries to add more.
+        </p>
+
+      </section>
+
+      <!-- 4. PIE CHART -->
+      <section
+        id="chart-section"
+        class="chart-section"
+        aria-labelledby="chart-heading"
+      >
+        <h2 id="chart-heading" class="chart-heading">Spending by Category</h2>
+
+        <div class="chart-wrapper">
+          <canvas
+            id="pie-chart"
+            class="pie-chart"
+            aria-label="Pie chart showing spending distribution by category"
+            role="img"
+          ></canvas>
+        </div>
+
+        <p id="chart-empty-state" class="chart-empty-state" role="status" hidden>
+          No transactions to display. Add an expense to see your spending breakdown.
+        </p>
+
+        <p id="chart-unavailable" class="chart-unavailable" role="alert" hidden>
+          Chart visualization unavailable. Check your internet connection.
+        </p>
+
+      </section>
+
+    </main>
+
+    <!-- Application logic -->
+    <script src="js/app.js"></script>
+  </body>
+</html>
